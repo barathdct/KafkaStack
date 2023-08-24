@@ -6,26 +6,26 @@ services:
     image: wurstmeister/zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_TICK_TIME: 2000 #uses ticks for tasks such as heartbeat intervals, session timeout calculations, and leader election
     ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
+      - 2181:2181 #client port
+      - 2888:2888 #peer port
+      - 3888:3888 #leader election port
 
  # kafka single node     
   kafka:
     image: wurstmeister/kafka:latest
-    restart: "no"
+    restart: "no" #When you specify restart: "no", we are telling Docker Compose not to automatically restart the container if it exits or crashes. This can be useful in situations where you want to have more manual control over when the container is started or restarted
     links:
-      - zookeeper
+      - zookeeper #the links section is used to establish a network link between containers. Specifically, in our yaml configuration, we are linking the Kafka container to the Zookeeper container using the zookeeper service name. 
     ports:
       - 9092:9092
     environment:
-      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_ID: 1 #unique identification of the kafka brokers, Sometimes we might have more than one brokers
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092 #basically port 9092 is used by producer and consumer
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT #this is to ensure secure communication b/w diff components. other security protocols are SSL SASL_PLAINTEXT, SASL_SSL
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       #https://github.com/wurstmeister/kafka-docker/issues/553
 
@@ -34,7 +34,7 @@ services:
     image: obsidiandynamics/kafdrop
     restart: "no"
     environment:
-      KAFKA_BROKERCONNECT: "kafka:29092"
+      KAFKA_BROKERCONNECT: "kafka:29092" #connect to broker using internal port since it is getting connected internally
       # JVM_OPTS: "-Xms16M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
     ports:
       - 9001:9000
