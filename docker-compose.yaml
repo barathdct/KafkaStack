@@ -40,3 +40,18 @@ services:
       - 9001:9000
     depends_on:
       - kafka
+
+  csharp-producer:
+    build:
+      context: C:\Projects\GitHub\Kafka.Producer
+      dockerfile: Dockerfile  # Adjust this if necessary
+    ports:
+      - 8080:80
+    depends_on:
+      - kafka
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
