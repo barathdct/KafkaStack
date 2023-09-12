@@ -54,7 +54,7 @@ services:
   
   kafka-consumer:
     build:
-      context: C:\Projects\Kafka.Consumer
+      context: C:\Projects\GitHub\Kafka.Consumer
       dockerfile: Dockerfile  # Adjust this if necessary
     depends_on:
       - kafka
